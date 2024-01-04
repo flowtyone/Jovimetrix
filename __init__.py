@@ -303,45 +303,45 @@ def configLoad() -> None:
 # == CUSTOM API RESPONSES
 # =============================================================================
 
-try:
-    @PromptServer.instance.routes.get("/jovimetrix/config")
-    async def jovimetrix_config(request) -> Any:
-        global JOV_CONFIG
-        configLoad()
-        return web.json_response(JOV_CONFIG)
-
-    @PromptServer.instance.routes.post("/jovimetrix/config")
-    async def jovimetrix_config_post(request) -> Any:
-        json_data = await request.json()
-        did = json_data.get("id", None)
-        value = json_data.get("v", None)
-        if did is None or value is None:
-            Logger.error("bad config", json_data)
-            return
-
-        global JOV_CONFIG
-        update_nested_dict(JOV_CONFIG, did, value)
-        Logger.spam(did, value)
-        with open(JOV_CONFIG_FILE, 'w', encoding='utf-8') as f:
-            json.dump(JOV_CONFIG, f, indent=4)
-        return web.json_response(json_data)
-
-    @PromptServer.instance.routes.post("/jovimetrix/config/clear")
-    async def jovimetrix_config_post(request) -> Any:
-        json_data = await request.json()
-        name = json_data['name']
-        Logger.spam(name)
-        global JOV_CONFIG
-        try:
-            del JOV_CONFIG['color'][name]
-        except KeyError as _:
-            pass
-        with open(JOV_CONFIG_FILE, 'w', encoding='utf-8') as f:
-            json.dump(JOV_CONFIG, f)
-        return web.json_response(json_data)
-
-except Exception as e:
-    Logger.err(e)
+# try:
+#     @PromptServer.instance.routes.get("/jovimetrix/config")
+#     async def jovimetrix_config(request) -> Any:
+#         global JOV_CONFIG
+#         configLoad()
+#         return web.json_response(JOV_CONFIG)
+#
+#     @PromptServer.instance.routes.post("/jovimetrix/config")
+#     async def jovimetrix_config_post(request) -> Any:
+#         json_data = await request.json()
+#         did = json_data.get("id", None)
+#         value = json_data.get("v", None)
+#         if did is None or value is None:
+#             Logger.error("bad config", json_data)
+#             return
+#
+#         global JOV_CONFIG
+#         update_nested_dict(JOV_CONFIG, did, value)
+#         Logger.spam(did, value)
+#         with open(JOV_CONFIG_FILE, 'w', encoding='utf-8') as f:
+#             json.dump(JOV_CONFIG, f, indent=4)
+#         return web.json_response(json_data)
+#
+#     @PromptServer.instance.routes.post("/jovimetrix/config/clear")
+#     async def jovimetrix_config_post(request) -> Any:
+#         json_data = await request.json()
+#         name = json_data['name']
+#         Logger.spam(name)
+#         global JOV_CONFIG
+#         try:
+#             del JOV_CONFIG['color'][name]
+#         except KeyError as _:
+#             pass
+#         with open(JOV_CONFIG_FILE, 'w', encoding='utf-8') as f:
+#             json.dump(JOV_CONFIG, f)
+#         return web.json_response(json_data)
+#
+# except Exception as e:
+#     Logger.err(e)
 
 # =============================================================================
 # == SUPPORT FUNCTIONS
