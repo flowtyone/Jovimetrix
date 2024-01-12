@@ -4,10 +4,10 @@
  *
  */
 
-import { app } from "/scripts/app.js"
-import { $el } from "/scripts/ui.js"
+import { app } from "../../../scripts/app.js"
+import { $el } from "../../../scripts/ui.js"
 import * as util from '../core/util.js'
-import { ComfyWidgets } from "/scripts/widgets.js"
+import { ComfyWidgets } from "../../../scripts/widgets.js"
 import { SpinnerWidget } from "../widget/widget_spinner.js"
 
 const VERTEX_SHADER = `#version 300 es

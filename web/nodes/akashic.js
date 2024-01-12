@@ -4,8 +4,8 @@
  *
  */
 
-import { app } from "/scripts/app.js"
-import { $el } from "/scripts/ui.js"
+import { app } from "../../../scripts/app.js"
+import { $el } from "../../../scripts/ui.js"
 import * as util from '../core/util.js'
 import { JImageWidget } from '../widget/widget_jimage.js'
 import { JStringWidget } from '../widget/widget_jstring.js'

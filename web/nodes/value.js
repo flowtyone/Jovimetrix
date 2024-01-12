@@ -4,10 +4,10 @@
  *
  */
 
-import { app } from "/scripts/app.js"
-import { $el } from "/scripts/ui.js"
+import { app } from "../../../scripts/app.js"
+import { $el } from "../../../scripts/ui.js"
 import * as util from '../core/util.js'
-import { ComfyWidgets } from "/scripts/widgets.js"
+import { ComfyWidgets } from "../../../scripts/widgets.js"
 
 const _id = "VALUE (JOV) #️⃣"
 

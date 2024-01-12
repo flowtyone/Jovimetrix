@@ -4,8 +4,8 @@
  *
  */
 
-import { app } from "/scripts/app.js"
-import { $el } from "/scripts/ui.js"
+import { app } from "../../../scripts/app.js"
+import { $el } from "../../../scripts/ui.js"
 import * as util from '../core/util.js'
 
 const _id = "VALUE GRAPH (JOV) 📈"

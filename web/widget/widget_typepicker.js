@@ -3,7 +3,7 @@
  * Project: Jovimetrix
  */
 
-import { app } from "/scripts/app.js"
+import { app } from "../../../scripts/app.js"
 import * as util from '../core/util.js'
 
 export const TypePickerWidget = (app, inputName, inputData) => {

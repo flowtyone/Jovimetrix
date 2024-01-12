@@ -4,7 +4,7 @@
  *
  */
 
-import { ComfyDialog, $el } from "/scripts/ui.js"
+import { ComfyDialog, $el } from "../../../scripts/ui.js"
 import * as util from './util.js'
 
 var headID = document.getElementsByTagName("head")[0]

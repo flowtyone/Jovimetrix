@@ -4,8 +4,9 @@
  *
  */
 
-import { app } from "/scripts/app.js"
-import { api } from "/scripts/api.js"
+import { app } from "../../../scripts/app.js"
+import { api } from "../../../scripts/api.js"
+import config from "../config.js"
 
 const CONVERTED_TYPE = "converted-widget";
 
@@ -36,8 +37,8 @@ export async function local_set(url, v) {
     localStorage.setItem(url, v)
 }
 
-export let NODE_LIST = await api_get("./../object_info")
-export let CONFIG_CORE = await api_get("/jovimetrix/config")
+export let NODE_LIST = await api.getNodeDefs()
+export let CONFIG_CORE = config;
 export let CONFIG_USER = CONFIG_CORE.user.default
 export let CONFIG_COLOR = CONFIG_USER.color
 export let CONFIG_REGEX = CONFIG_COLOR.regex || []
