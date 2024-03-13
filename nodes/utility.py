@@ -411,104 +411,104 @@ class QueueNode(JOVBaseNode):
         # q = torch.cat(self.__q, dim=0)
         return [data] * batch, self.__q, current, self.__index, self.__len,
 
-class ExportNode(JOVBaseNode):
-    NAME = "EXPORT (JOV) 📽"
-    CATEGORY = JOV_CATEGORY
-    DESCRIPTION = "Take your frames out static or animated (GIF)"
-    OUTPUT_NODE = True
-    SORT = 80
-
-    @classmethod
-    def INPUT_TYPES(cls) -> dict:
-        d = {
-        "required": {},
-        "optional": {
-            Lexicon.PIXEL: (WILDCARD, {}),
-            Lexicon.PASS_OUT: ("STRING", {"default": get_output_directory()}),
-            Lexicon.FORMAT: (FORMATS, {"default": FORMATS[0]}),
-            Lexicon.PREFIX: ("STRING", {"default": ""}),
-            Lexicon.OVERWRITE: ("BOOLEAN", {"default": False}),
-            # GIF ONLY
-            Lexicon.OPTIMIZE: ("BOOLEAN", {"default": False}),
-            # GIFSKI ONLY
-            Lexicon.QUALITY: ("INT", {"default": 90, "min": 1, "max": 100}),
-            Lexicon.QUALITY_M: ("INT", {"default": 100, "min": 1, "max": 100}),
-            # GIF OR GIFSKI
-            Lexicon.FPS: ("INT", {"default": 20, "min": 1, "max": 60}),
-            # GIF OR GIFSKI
-            Lexicon.LOOP: ("INT", {"default": 0, "min": 0}),
-        }}
-        return Lexicon._parse(d, JOV_HELP_URL + "/UTILITY#-export")
-
-    def run(self, **kw) -> None:
-        pA = kw.get(Lexicon.PIXEL, None)
-        pA = [None] if pA is None else batch_extract(pA)
-        suffix = kw.get(Lexicon.PREFIX, [""])[0]
-        if suffix == "":
-            suffix = uuid4().hex[:16]
-
-        output_dir = kw.get(Lexicon.PASS_OUT, [""])[0]
-        format = kw.get(Lexicon.FORMAT, ["gif"])[0]
-        overwrite = kw.get(Lexicon.OVERWRITE, False)[0]
-        optimize = kw.get(Lexicon.OPTIMIZE, [False])[0]
-        quality = kw.get(Lexicon.QUALITY, [0])[0]
-        motion = kw.get(Lexicon.QUALITY_M, [0])[0]
-        fps = kw.get(Lexicon.FPS, [0])[0]
-        loop = kw.get(Lexicon.LOOP, [0])[0]
-
-        output_dir = Path(output_dir)
-        output_dir.mkdir(parents=True, exist_ok=True)
-
-        def output(extension) -> Path:
-            path = output_dir / f"{suffix}.{extension}"
-            if not overwrite and os.path.isfile(path):
-                path = str(output_dir / f"{suffix}_%s.{extension}")
-                path = path_next(path)
-            return path
-
-        empty = Image.new("RGB", (MIN_IMAGE_SIZE, MIN_IMAGE_SIZE))
-        images = [tensor2pil(i).convert("RGB") if i is not None else empty for i in pA]
-        if format == "gifski":
-            root = output_dir / f"{suffix}_{uuid4().hex[:16]}"
-            try:
-                root.mkdir(parents=True, exist_ok=True)
-                for idx, i in enumerate(images):
-                    fname = str(root / f"{suffix}_{idx}.png")
-                    i.save(fname)
-            except Exception as e:
-                logger.warning(output_dir)
-                logger.error(str(e))
-                return
-
-            out = output('gif')
-            fps = f"--fps {fps}" if fps > 0 else ""
-            q = f"--quality {quality}"
-            mq = f"--motion-quality {motion}"
-            cmd = f"{JOV_GIFSKI} -o {out} {q} {mq} {fps} {str(root)}/{suffix}_*.png"
-            logger.info(cmd)
-            try:
-                os.system(cmd)
-            except Exception as e:
-                logger.warning(cmd)
-                logger.error(str(e))
-
-            shutil.rmtree(root)
-
-        elif format == "gif":
-            images[0].save(
-                output('gif'),
-                append_images=images[1:],
-                disposal=2,
-                duration=1 / fps * 1000 if fps else 0,
-                loop=loop,
-                optimize=optimize,
-                save_all=True,
-            )
-        else:
-            for img in images:
-                img.save(output(format), optimize=optimize)
-
-        return ()
+# class ExportNode(JOVBaseNode):
+#     NAME = "EXPORT (JOV) 📽"
+#     CATEGORY = JOV_CATEGORY
+#     DESCRIPTION = "Take your frames out static or animated (GIF)"
+#     OUTPUT_NODE = True
+#     SORT = 80
+#
+#     @classmethod
+#     def INPUT_TYPES(cls) -> dict:
+#         d = {
+#         "required": {},
+#         "optional": {
+#             Lexicon.PIXEL: (WILDCARD, {}),
+#             Lexicon.PASS_OUT: ("STRING", {"default": get_output_directory()}),
+#             Lexicon.FORMAT: (FORMATS, {"default": FORMATS[0]}),
+#             Lexicon.PREFIX: ("STRING", {"default": ""}),
+#             Lexicon.OVERWRITE: ("BOOLEAN", {"default": False}),
+#             # GIF ONLY
+#             Lexicon.OPTIMIZE: ("BOOLEAN", {"default": False}),
+#             # GIFSKI ONLY
+#             Lexicon.QUALITY: ("INT", {"default": 90, "min": 1, "max": 100}),
+#             Lexicon.QUALITY_M: ("INT", {"default": 100, "min": 1, "max": 100}),
+#             # GIF OR GIFSKI
+#             Lexicon.FPS: ("INT", {"default": 20, "min": 1, "max": 60}),
+#             # GIF OR GIFSKI
+#             Lexicon.LOOP: ("INT", {"default": 0, "min": 0}),
+#         }}
+#         return Lexicon._parse(d, JOV_HELP_URL + "/UTILITY#-export")
+#
+#     def run(self, **kw) -> None:
+#         pA = kw.get(Lexicon.PIXEL, None)
+#         pA = [None] if pA is None else batch_extract(pA)
+#         suffix = kw.get(Lexicon.PREFIX, [""])[0]
+#         if suffix == "":
+#             suffix = uuid4().hex[:16]
+#
+#         output_dir = kw.get(Lexicon.PASS_OUT, [""])[0]
+#         format = kw.get(Lexicon.FORMAT, ["gif"])[0]
+#         overwrite = kw.get(Lexicon.OVERWRITE, False)[0]
+#         optimize = kw.get(Lexicon.OPTIMIZE, [False])[0]
+#         quality = kw.get(Lexicon.QUALITY, [0])[0]
+#         motion = kw.get(Lexicon.QUALITY_M, [0])[0]
+#         fps = kw.get(Lexicon.FPS, [0])[0]
+#         loop = kw.get(Lexicon.LOOP, [0])[0]
+#
+#         output_dir = Path(output_dir)
+#         output_dir.mkdir(parents=True, exist_ok=True)
+#
+#         def output(extension) -> Path:
+#             path = output_dir / f"{suffix}.{extension}"
+#             if not overwrite and os.path.isfile(path):
+#                 path = str(output_dir / f"{suffix}_%s.{extension}")
+#                 path = path_next(path)
+#             return path
+#
+#         empty = Image.new("RGB", (MIN_IMAGE_SIZE, MIN_IMAGE_SIZE))
+#         images = [tensor2pil(i).convert("RGB") if i is not None else empty for i in pA]
+#         if format == "gifski":
+#             root = output_dir / f"{suffix}_{uuid4().hex[:16]}"
+#             try:
+#                 root.mkdir(parents=True, exist_ok=True)
+#                 for idx, i in enumerate(images):
+#                     fname = str(root / f"{suffix}_{idx}.png")
+#                     i.save(fname)
+#             except Exception as e:
+#                 logger.warning(output_dir)
+#                 logger.error(str(e))
+#                 return
+#
+#             out = output('gif')
+#             fps = f"--fps {fps}" if fps > 0 else ""
+#             q = f"--quality {quality}"
+#             mq = f"--motion-quality {motion}"
+#             cmd = f"{JOV_GIFSKI} -o {out} {q} {mq} {fps} {str(root)}/{suffix}_*.png"
+#             logger.info(cmd)
+#             try:
+#                 os.system(cmd)
+#             except Exception as e:
+#                 logger.warning(cmd)
+#                 logger.error(str(e))
+#
+#             shutil.rmtree(root)
+#
+#         elif format == "gif":
+#             images[0].save(
+#                 output('gif'),
+#                 append_images=images[1:],
+#                 disposal=2,
+#                 duration=1 / fps * 1000 if fps else 0,
+#                 loop=loop,
+#                 optimize=optimize,
+#                 save_all=True,
+#             )
+#         else:
+#             for img in images:
+#                 img.save(output(format), optimize=optimize)
+#
+#         return ()
 
 class ImageDiffNode(JOVBaseNode):
     NAME = "IMAGE DIFF (JOV) 📏"
